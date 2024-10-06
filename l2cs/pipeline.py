@@ -20,7 +20,8 @@ class Pipeline:
         arch: str,
         device: str = 'cpu', 
         include_detector:bool = True,
-        confidence_threshold:float = 0.5
+        confidence_threshold:float = 0.5,
+        bins:int = 28
         ):
 
         # Save input parameters
@@ -30,7 +31,7 @@ class Pipeline:
         self.confidence_threshold = confidence_threshold
 
         # Create L2CS model
-        self.model = getArch(arch, 28)
+        self.model = getArch(arch, bins)
         self.model.load_state_dict(torch.load(self.weights, map_location=device))
         self.model.to(self.device)
         self.model.eval()
@@ -44,7 +45,7 @@ class Pipeline:
                 self.detector = RetinaFace(gpu_id=device.index)
 
             self.softmax = nn.Softmax(dim=1)
-            self.idx_tensor = [idx for idx in range(90)]
+            self.idx_tensor = [idx for idx in range(bins)]
             self.idx_tensor = torch.FloatTensor(self.idx_tensor).to(self.device)
 
     def step(self, frame: np.ndarray) -> GazeResultContainer:
@@ -87,12 +88,12 @@ class Pipeline:
                     scores.append(score)
 
                 # Predict gaze
+                if len(face_imgs) == 0:
+                    return None
                 pitch, yaw = self.predict_gaze(np.stack(face_imgs))
 
             else:
-
-                pitch = np.empty((0,1))
-                yaw = np.empty((0,1))
+                return None
 
         else:
             pitch, yaw = self.predict_gaze(frame)
