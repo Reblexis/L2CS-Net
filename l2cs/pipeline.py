@@ -30,7 +30,7 @@ class Pipeline:
         self.confidence_threshold = confidence_threshold
 
         # Create L2CS model
-        self.model = getArch(arch, 90)
+        self.model = getArch(arch, 28)
         self.model.load_state_dict(torch.load(self.weights, map_location=device))
         self.model.to(self.device)
         self.model.eval()
