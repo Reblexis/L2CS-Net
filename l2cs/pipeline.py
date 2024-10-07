@@ -120,7 +120,7 @@ class Pipeline:
             raise RuntimeError("Invalid dtype for input")
     
         # Predict 
-        gaze_pitch, gaze_yaw = self.model(img)
+        gaze_yaw, gaze_pitch = self.model(img)
         pitch_predicted = self.softmax(gaze_pitch)
         yaw_predicted = self.softmax(gaze_yaw)
         
