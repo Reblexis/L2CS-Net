@@ -10,8 +10,8 @@ def draw_gaze(a,b,c,d,image_in, pitchyaw, thickness=2, color=(255, 255, 0),sclae
     pos = (int(a+c / 2.0), int(b+d / 2.0))
     if len(image_out.shape) == 2 or image_out.shape[2] == 1:
         image_out = cv2.cvtColor(image_out, cv2.COLOR_GRAY2BGR)
-    dx = -length * np.sin(pitchyaw[0]) * np.cos(pitchyaw[1])
-    dy = -length * np.sin(pitchyaw[1])
+    dx = -length * np.sin(pitchyaw[1]) * np.cos(pitchyaw[0])
+    dy = -length * np.sin(pitchyaw[0])
     cv2.arrowedLine(image_out, tuple(np.round(pos).astype(np.int32)),
                    tuple(np.round([pos[0] + dx, pos[1] + dy]).astype(int)), color,
                    thickness, cv2.LINE_AA, tipLength=0.18)
