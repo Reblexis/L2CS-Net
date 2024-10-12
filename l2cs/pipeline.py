@@ -18,7 +18,7 @@ class Pipeline:
         self, 
         weights: pathlib.Path, 
         arch: str,
-        device: str = 'cpu', 
+        device: str = 'cuda:0' if torch.cuda.is_available() else 'cpu', 
         include_detector:bool = True,
         confidence_threshold:float = 0.5,
         bins:int = 28
@@ -120,10 +120,7 @@ class Pipeline:
             raise RuntimeError("Invalid dtype for input")
     
         # Predict 
-        import time
-        start_time = time.time()
         gaze_yaw, gaze_pitch = self.model(img)
-        print("Gaze prediction fps: ", 1.0 / (time.time() - start_time))
         pitch_predicted = self.softmax(gaze_pitch)
         yaw_predicted = self.softmax(gaze_yaw)
         
