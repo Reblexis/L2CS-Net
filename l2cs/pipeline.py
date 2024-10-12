@@ -44,9 +44,9 @@ class Pipeline:
             else:
                 self.detector = RetinaFace(gpu_id=device.index)
 
-            self.softmax = nn.Softmax(dim=1)
-            self.idx_tensor = [idx for idx in range(bins)]
-            self.idx_tensor = torch.FloatTensor(self.idx_tensor).to(self.device)
+        self.softmax = nn.Softmax(dim=1)
+        self.idx_tensor = [idx for idx in range(bins)]
+        self.idx_tensor = torch.FloatTensor(self.idx_tensor).to(self.device)
 
     def step(self, frame: np.ndarray) -> GazeResultContainer:
 
@@ -102,9 +102,9 @@ class Pipeline:
         results = GazeResultContainer(
             pitch=pitch,
             yaw=yaw,
-            bboxes=np.stack(bboxes),
-            landmarks=np.stack(landmarks),
-            scores=np.stack(scores)
+            bboxes=np.array(bboxes),
+            landmarks=np.array(landmarks),
+            scores=np.array(scores)
         )
 
         return results
@@ -120,7 +120,10 @@ class Pipeline:
             raise RuntimeError("Invalid dtype for input")
     
         # Predict 
+        import time
+        start_time = time.time()
         gaze_yaw, gaze_pitch = self.model(img)
+        print("Gaze prediction fps: ", 1.0 / (time.time() - start_time))
         pitch_predicted = self.softmax(gaze_pitch)
         yaw_predicted = self.softmax(gaze_yaw)
         
